@@ -2,7 +2,7 @@ import requests
 import hashlib
 import sys
 
-
+#Define API function
 def request_api_data (query_char):
 	url = 'https://api.pwnedpasswords.com/range/' + query_char
 	res = requests.get(url)
@@ -10,6 +10,7 @@ def request_api_data (query_char):
 		raise RuntimeError(f'Error fetching: {res.status_code}, check the API and try again')
 	return res
 
+#Define password leakage count function
 def get_password_leaks_count (hashes, hash_to_check):
 	hashes = (line.split(':') for line in hashes.text.splitlines())
 	for h, count in hashes:
@@ -17,7 +18,7 @@ def get_password_leaks_count (hashes, hash_to_check):
 			return count
 	return 0
 		 	
-	
+#Define password hashing function	
 def pwned_api_check (password):
 	# check password if its exists in API response
 	sha1password =hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
@@ -25,6 +26,7 @@ def pwned_api_check (password):
 	response = request_api_data(first5_char)
 	return get_password_leaks_count(response, tail)
 
+#Define main function
 def main (args):
 	for password in args:
 		count = pwned_api_check (password)
